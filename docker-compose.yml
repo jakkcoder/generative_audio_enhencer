@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  speech-enhancement:
+    container_name: speech-enhancement-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /c/Users/jaysh/Documents:/app/Documents  # Updated path for mounting
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    command: flask run --host=0.0.0.0 --port=5000
