@@ -1,0 +1,3 @@
+[submodule "speech-enhancement-sgmse"]
+   path = speech-enhancement-sgmse
+   url = https://huggingface.co/sp-uhh/speech-enhancement-sgmse
