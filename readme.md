@@ -1,5 +1,3 @@
-Here is the full `README.md` content in markdown format for the remaining steps:
-
 ```markdown
 # Speech Enhancement Service
 
