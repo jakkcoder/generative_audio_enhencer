@@ -14,7 +14,7 @@ INPUT_DIR = "/app/Documents/input"
 OUTPUT_DIR = "/app/Documents/output"
 TEMP_INPUT_DIR = "/app/Documents/temp/input"
 TEMP_OUTPUT_DIR = "/app/Documents/temp/output"
-FINAL_OUTPUT_DIR = "/app/Documents/output"
+FINAL_OUTPUT_DIR = "/app/Documents/temp/final_output"
 
 @app.route('/process', methods=['POST'])
 def process_audio_files():
