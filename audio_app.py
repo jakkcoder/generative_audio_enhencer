@@ -10,18 +10,31 @@ import time
 app = Flask(__name__)
 
 # Input and Output directories
-INPUT_DIR = "/app/Documents/input"
-OUTPUT_DIR = "/app/Documents/output"
-TEMP_INPUT_DIR = "/app/Documents/temp/input"
-TEMP_OUTPUT_DIR = "/app/Documents/temp/output"
-FINAL_OUTPUT_DIR = "/app/Documents/temp/final_output"
+INPUT_DIR = "/app/Documents/Audio/input"
+OUTPUT_DIR = "/app/Documents/Audio/output"
+TEMP_INPUT_DIR = "/app/Documents/Audio/temp/input"
+TEMP_OUTPUT_DIR = "/app/Documents/Audio/temp/output"
+FINAL_OUTPUT_DIR = "/app/Documents/Audio/temp/final_output"
+
+def check_and_create_directory_recursively(directory):
+    # Split the directory into parts
+    path_parts = directory.split(os.sep)
+    
+    # Initialize an empty path to build up each part
+    current_path = ""
+    
+    # Check and create each part of the path
+    for part in path_parts:
+        if part:  # Avoid empty strings
+            current_path = os.path.join(current_path, part)
+            if not os.path.exists(current_path):
+                os.makedirs(current_path)
 
 @app.route('/process', methods=['POST'])
 def process_audio_files():
-    # Ensure input and output directories exist
+    # Ensure input and output directories exist recursively
     for directory in [INPUT_DIR, OUTPUT_DIR, TEMP_INPUT_DIR, TEMP_OUTPUT_DIR, FINAL_OUTPUT_DIR]:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
+        check_and_create_directory_recursively(directory)
 
     # Process each .wav file in the input directory
     for filename in os.listdir(INPUT_DIR):
