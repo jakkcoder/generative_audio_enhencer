@@ -6,68 +6,52 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Python, ffmpeg, and other necessary packages, including libsndfile1-dev for soundfile support
 RUN apt-get update && apt-get install -y \
+    supervisor \
     python3.8 \
     python3-pip \
+    python3-venv \
     git \
     libsndfile1-dev \
     ffmpeg \
     tzdata && \
     rm -rf /var/lib/apt/lists/*
 
-# ------------------------------------------------
-# Set up environment for FastAPI (starter.py)
-# ------------------------------------------------
-WORKDIR /app/starter
+# Set working directory to /app
+WORKDIR /app
 
-# Copy the starter script files into the container
-COPY ./starter.py /app/starter/
-COPY starter_requirements.txt /app/starter/starter_requirements.txt
-
-# Install the Python dependencies for the FastAPI app (starter)
-RUN pip3 install -r /app/starter/starter_requirements.txt
-
-# Expose port 8000 for FastAPI (starter.py)
-EXPOSE 8000
+# Copy the entire directory into /app
+COPY . /app
 
 # ------------------------------------------------
-# Set up second environment for audio processing (audio_app.py)
+# Create and activate virtual environments
 # ------------------------------------------------
-WORKDIR /app/audio_env
 
-# Copy the audio app and dependencies
-COPY ./audio_app.py /app/audio_env/
-COPY ./speech-enhancement-sgmse /app/audio_env/speech-enhancement-sgmse
+# Audio processing virtual environment setup
+RUN python3 -m venv /app/venvs/audio_env && \
+    /app/venvs/audio_env/bin/pip install --upgrade pip && \
+    /app/venvs/audio_env/bin/pip install -r /app/audio_requirements.txt && \
+    /app/venvs/audio_env/bin/pip install flask pydub
 
-# Install the Python dependencies for the audio app
-RUN pip3 install -r /app/audio_env/speech-enhancement-sgmse/requirements.txt
+# FastAPI starter virtual environment setup
+RUN python3 -m venv /app/venvs/starter_env && \
+    /app/venvs/starter_env/bin/pip install --upgrade pip && \
+    /app/venvs/starter_env/bin/pip install -r /app/starter_requirements.txt
 
-# Install Flask and pydub if not listed in requirements.txt
-RUN pip3 install flask pydub
+# Video processing virtual environment setup
+RUN python3 -m venv /app/venvs/video_env && \
+    /app/venvs/video_env/bin/pip install --upgrade pip && \
+    /app/venvs/video_env/bin/pip install -r /app/video_requirements.txt
 
-# Expose the Flask app port for audio (port 5000)
+# Install PyTorch with CUDA from PyTorch official channel
+RUN /app/venvs/video_env/bin/pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
+
+# Install additional Python packages (Flask, pydub, fastapi, uvicorn)
+RUN pip3 install flask pydub fastapi uvicorn
+
+# Expose necessary ports
+EXPOSE 8000 
 EXPOSE 5000
-
-# ------------------------------------------------
-# Set up third environment for video processing (video_app.py)
-# ------------------------------------------------
-WORKDIR /app/video_env
-
-# Copy the video app and dependencies
-COPY ./video_app.py /app/video_env/
-COPY ./video_requirement.py /app/video_env/video_requirement.py
-
-# Install the Python dependencies for the video app
-RUN pip3 install fastapi uvicorn
-
-# Expose the FastAPI port for video (port 8080)
 EXPOSE 8080
-
-# ------------------------------------------------
-# Start all three apps using supervisord
-# ------------------------------------------------
-
-# Install supervisor to manage all processes
-RUN apt-get install -y supervisor
 
 # Copy the supervisor configuration file
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

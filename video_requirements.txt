@@ -1,0 +1,8 @@
+fastapi==0.95.1
+uvicorn==0.22.0
+opencv-python-headless==4.5.5.64
+basicsr==1.4.2
+realesrgan==0.3.0
+tqdm==4.62.3
+pydantic==1.10.2
+

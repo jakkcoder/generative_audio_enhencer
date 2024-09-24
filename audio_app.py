@@ -10,11 +10,11 @@ import time
 app = Flask(__name__)
 
 # Input and Output directories
-INPUT_DIR = "/app/Documents/Audio/input"
-OUTPUT_DIR = "/app/Documents/Audio/output"
-TEMP_INPUT_DIR = "/app/Documents/Audio/temp/input"
-TEMP_OUTPUT_DIR = "/app/Documents/Audio/temp/output"
-FINAL_OUTPUT_DIR = "/app/Documents/Audio/temp/final_output"
+INPUT_DIR = "/app/Documents/temp/Audio/input"
+OUTPUT_DIR = "/app/Documents/temp/Audio/output"
+TEMP_INPUT_DIR = "/app/Documents/temp/Audio/temp_input"
+TEMP_OUTPUT_DIR = "/app/Documents/temp/Audio/temp_output"
+FINAL_OUTPUT_DIR = "/app/Documents/temp/Audio/final_output"
 
 def check_and_create_directory_recursively(directory):
     # Split the directory into parts

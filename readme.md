@@ -63,7 +63,7 @@ docker-compose up
 Once the Docker container is up and running, you can start processing the audio files in the `input` folder by sending a `POST` request to the service using `curl`:
 
 ```bash
-curl -X POST http://localhost:5000/process_audio
+curl -X GET "http://localhost:8000/process_file"
 ```
 
 ### 6. Process Video Files
