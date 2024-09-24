@@ -1,19 +1,60 @@
 version: '3.8'
+
 services:
-  speech-enhancement:
-    container_name: speech-enhancement-service
+  # FastAPI service for starter.py
+  starter-service:
+    container_name: starter-service
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - /c/Users/jaysh/Documents:/app/Documents  # Updated path for mounting
+      - /c/Users/jaysh/Documents:/app/Documents  # Windows path for mounting
     ports:
-      - "5000:5000"
-    environment:
-      - FLASK_ENV=development
+      - "8000:8000"
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: [gpu]
-    command: flask run --host=0.0.0.0 --port=5000
+    command: /app/venvs/starter_env/bin/uvicorn starter:app --host=0.0.0.0 --port=8000
+    environment:
+      - FASTAPI_ENV=development
+
+  # Flask service for audio processing (audio_app.py)
+  audio-processing-service:
+    container_name: audio-processing-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /c/Users/jaysh/Documents:/app/Documents  # Windows path for mounting
+    ports:
+      - "5000:5000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    command: /app/venvs/audio_env/bin/flask run --host=0.0.0.0 --port=5000
+    environment:
+      FLASK_APP: audio_app.py  # Set FLASK_APP environment variable
+      FLASK_ENV: development
+
+  # FastAPI service for video processing (video_app.py)
+  video-processing-service:
+    container_name: video-processing-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /c/Users/jaysh/Documents:/app/Documents  # Windows path for mounting
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    command: /app/venvs/video_env/bin/uvicorn video_app:app --host=0.0.0.0 --port=8080
+    environment:
+      - FASTAPI_ENV=development
