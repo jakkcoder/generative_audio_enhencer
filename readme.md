@@ -1,4 +1,6 @@
+
 # GENERATIVE Audio and Video Enhancement Service
+
 
 This repository provides a Docker-based service for **video enhancement** that uses GPU for processing. The service takes `.wav` audio files and `.mp4` video files from the input folder, processes them, and outputs the processed files to the output folder.
 It uses generative AI for video as well as audio quality imporovement.
