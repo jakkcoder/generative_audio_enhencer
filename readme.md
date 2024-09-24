@@ -1,4 +1,4 @@
-# Speech Enhancement Service
+# Video Enhancement Service
 
 This repository provides a Docker-based speech enhancement service that uses GPU for processing. The service takes `.wav` audio files from the input folder, enhances them, and outputs the processed files to the output folder.
 
