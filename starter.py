@@ -98,15 +98,54 @@ def call_audio_processing_api(audio_file):
     return os.path.join(AUDIO_DIR, "final_output", os.path.basename(audio_file))
 
 
-def combine_audio_video(video_file, audio_file, output_file):
-    """Combine audio and video and save the final output."""
-    print(f"Combining video file: {video_file} with audio file: {audio_file}")
-    print(f"Final output file: {output_file}")
+
+def combine_audio_video(audio_dir, video_dir, output_file):
+    """Combine the video from video_dir and the audio from audio_dir and save the final output."""
     
+    # Get the video and audio files from the respective directories
+    audio_files = os.listdir(audio_dir)
+    video_files = os.listdir(video_dir)
+    
+    # Identify video and audio files
+    video_file = None
+    audio_file = None
+    
+    for file in video_files:
+        if file.endswith(".mp4"):  # Assuming the video file is .mp4
+            video_file = os.path.join(video_dir, file)
+            break  # Stop as soon as we find the first video file
+    
+    for file in audio_files:
+        if file.endswith(".wav"):  # Assuming the audio file is .wav
+            audio_file = os.path.join(audio_dir, file)
+            break  # Stop as soon as we find the first audio file
+
+    if not video_file or not audio_file:
+        raise Exception("Either video or audio file is missing in the specified directories.")
+    
+    print(f"Combining video file: {video_file} with audio file: {audio_file}")
+    print(f"Saving the combined file to: {output_file}")
+
+    # FFmpeg command to combine video and audio
     combine_command = [
-        "ffmpeg", "-i", video_file, "-i", audio_file, "-c:v", "copy", "-c:a", "aac", output_file
+        "ffmpeg", "-y", "-i", video_file, "-i", audio_file, "-c:v", "copy", "-c:a", "aac",
+        "-map", "0:v:0", "-map", "1:a:0", "-shortest", output_file
     ]
-    subprocess.run(combine_command)
+    
+    print(f"Running command: {' '.join(combine_command)}")
+    
+    # Run the FFmpeg command and capture output
+    result = subprocess.run(combine_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    
+    # Check for errors
+    if result.returncode != 0:
+        print(f"FFmpeg failed with error: {result.stderr.decode('utf-8')}")
+        raise Exception(f"FFmpeg failed with error: {result.stderr.decode('utf-8')}")
+    else:
+        print(f"Video and audio combined successfully into: {output_file}")
+
+    return output_file
+
 
 @app.get("/process_file")
 def process_file():
@@ -135,10 +174,12 @@ def process_file():
  
         # Step 3: Call video processing API
         processed_video_file = call_video_processing_api(video_file)
+        processed_video_file ='/app/Documents/temp/Video/final_output'
+        processed_audio_file = '/app/Documents/temp/Audio/final_output'
 
         # Step 4: Combine the processed audio and video
         output_file = os.path.join(OUTPUT_DIR, f"{os.path.basename(input_file).split('.')[0]}_final.mp4")
-        combine_audio_video(processed_video_file, processed_audio_file, output_file)
+        combine_audio_video(processed_audio_file,processed_video_file, output_file)
 
     print(f"Processing complete. All files saved to: {OUTPUT_DIR}")
     return {"message": "Processing complete", "output_directory": OUTPUT_DIR}
