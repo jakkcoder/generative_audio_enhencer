@@ -21,9 +21,9 @@ cd <repository-directory>
 
 ### 2. Download the Pre-trained Model for Speech Enhancement
 
-Download the pre-trained model checkpoint from Hugging Face:
+Download the pre-trained WSJ0-CHiME3 checkpoint from the official SGMSE repository:
 
-[Download the Model from Hugging Face](https://huggingface.co/sp-uhh/speech-enhancement-sgmse/resolve/main/pretrained_checkpoints/speech_enhancement/train_wsj0_2cta4cov_epoch%3D159.ckpt)
+[Download the Model Checkpoints (Google Drive)](https://drive.google.com/drive/folders/1CSnkhUSoiv3RG0xg7WEcVapyLuwDaLbe?usp=sharing)
 
 Once downloaded, move the file to the following directory structure:
 
